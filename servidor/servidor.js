@@ -14,12 +14,15 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json());
 
-app.get('/peliculas?', controlador.traerPelis);
-//app.get ('/???', controlador.traerGeneros);
-  
+
+app.get('/peliculas', controlador.traerPelisFiltradas);
+app.get('/generos', controlador.traerGeneros);
+app.get('/peliculas/recomendacion', controlador.recomendarPeli);
+app.get('/peliculas/:id', controlador.mostrarPeli);
+
 
 //seteamos el puerto en el cual va a escuchar los pedidos la aplicación
-var puerto = '3000';
+var puerto = '8080';
 
 app.listen(puerto, function () {
   console.log( "Escuchando en el puerto " + puerto );

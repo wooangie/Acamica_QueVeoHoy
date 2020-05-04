@@ -20,6 +20,9 @@ CREATE TABLE pelicula(
 );
 
 
+# Se agrega la información de la tabla pelicula con el comando source
+
+
 #creación de tabla género
 CREATE TABLE genero(
     id INT NOT NULL auto_increment,
@@ -40,4 +43,42 @@ ADD CONSTRAINT `genero_id`
   REFERENCES `peliculas`.`pelicula` (`id`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
+
+
+# Se agrega la información de la tabla genero con el comando source
+
+#creación de tabla actor
+CREATE TABLE actor(
+    id INT NOT NULL auto_increment,
+    nombre VARCHAR (70),
+    PRIMARY KEY (id)
+);
+
+#creación de tabla actor_pelicula que vincula las tablas actor y película
+CREATE TABLE actor_pelicula(
+    id INT NOT NULL auto_increment,
+    actor_id INT NOT NULL,
+    pelicula_id INT NOT NULL,
+    PRIMARY KEY (id)
+);
+
+ALTER TABLE `peliculas`.`actor_pelicula` 
+ADD INDEX `id_idx` (`actor_id` ASC) VISIBLE;
+;
+ALTER TABLE `peliculas`.`actor_pelicula` 
+ADD CONSTRAINT `id`
+  FOREIGN KEY (`actor_id`)
+  REFERENCES `peliculas`.`actor` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+#Creo la FK para relacionar las tablas actor_pelicula con actor
+ALTER TABLE actor_pelicula 
+ADD FOREIGN KEY (actor_id) REFERENCES actor(id);
+
+#Creo la FK para relacionar las tablas actor_pelicula con pelicula
+ALTER TABLE actor_pelicula 
+ADD FOREIGN KEY (pelicula_id) REFERENCES pelicula(id);
+
+#Corro el script para llenar la tabla de actores
 
