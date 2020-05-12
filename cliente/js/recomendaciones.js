@@ -123,7 +123,7 @@ function ControladorRecomendaciones() {
         $.getJSON(servidor + ruta + query,
             function(data) {
                 //la respuesta del backend va a ser un array del peliculas. Antes de guardar ese array mezclamos su contenido
-                //para que no siempre se muestren las peliculas en el mismo
+                //para que no siempre se muestren las peliculas en el mismo orden
                 var peliculas_desordenadas = self.desordenarArray(data.peliculas);
                 //se guardan las peliculas desordenadas
                 self.resultados = peliculas_desordenadas;
@@ -159,7 +159,7 @@ function ControladorRecomendaciones() {
         $(".datos-pelicula .imagen").attr("src", data.poster);
         $(".datos-pelicula .trama").html(data.trama);
         $(".datos-pelicula .titulo").html(data.titulo);
-        $(".datos-pelicula .genero").html(data.nombre);
+        $(".datos-pelicula .genero").html(data.nombre_genero);
 
     }
 
