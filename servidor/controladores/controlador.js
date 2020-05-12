@@ -1,33 +1,18 @@
 var con = require ('../lib/conexionbd');
 
-/*
-//función que trae todas las películas de la guía 1
-function traerPelis(req, res){
-    let sql = 'SELECT * FROM pelicula'
-    con.query(sql, function (error, resultado, fields){
-        if(error) {
-            console.log ('Hubo un error en la consulta', error.message);
-            return res.status(404).send ('Hubo un error en la consulta');
-        }
-        
-        var response = {
-            'peliculas': resultado
-        }
-        console.log ('Se enviaron todas las películas');
-        res.send (JSON.stringify(response));
-    });
-};*/
+
 
 
 //función que trae todas las películas según filtros de la guía 2
 function traerPelisFiltradas(req, res){
+    console.log(req.query);
     let anio = req.query.anio;
     let titulo = req.query.titulo;
     let genero_id = req.query.genero;
     let columna_orden = req.query.columna_orden;
     let tipo_orden = req.query.tipo_orden;
     let pagina = req.query.pagina;
-    let cantidad = 20;
+    let cantidad = req.query.cantidad;
     
     let sqlParcial = 'SELECT * FROM pelicula '
 
@@ -54,21 +39,37 @@ function traerPelisFiltradas(req, res){
         };
     };
 
-    //sumo a la query el orden (que siempre viene por default) por columna y tipo
-    sqlParcial += ' ORDER BY ' + columna_orden + ' ' + tipo_orden + ' LIMIT ' + (pagina-1)*cantidad + ',' + cantidad;
-
+    console.log ('la sql parcial es:')
     console.log (sqlParcial);
+    
     con.query(sqlParcial, function (error, resultado, fields){
         if(error) {
             console.log ('Error en la consulta: ', error.message);
             return res.status(404).send ('Hubo un error en la consulta');
         };
+        //Son todas las pelis que cumplen con los filtros aplicados
+        let totalResultados = resultado.length
+        console.log(totalResultados)
 
-        var response = {
-            'peliculas': resultado
-        };
-        console.log ('Se enviaron todas las películas filtradas');
-        res.send (JSON.stringify(response));
+        //Armo la query para que sólo llegue la cantidad que viene especificada en req.body
+        sqlParcialconLimit = sqlParcial + ' ORDER BY ' + columna_orden + ' ' + tipo_orden + ' LIMIT ' + (pagina-1)*cantidad + ',' + cantidad;
+        
+        console.log ('la sql parcial con limit es:')
+        console.log (sqlParcialconLimit);
+    
+        con.query(sqlParcialconLimit, function (error, resultado, fields){
+            if(error) {
+                console.log ('Error en la consulta: ', error.message);
+                return res.status(404).send ('Hubo un error en la consulta');
+            };
+            //guardo en total la cantidad de  pelis que cumplen con los filtros aplicados
+            //guardo en peliculas las peliculas que cumplen con los filtros y están paginadas.
+            var response = {
+                'peliculas': resultado,
+                'total':totalResultados
+            };
+            res.send (JSON.stringify(response));
+        })
     });
 };
 
@@ -180,4 +181,4 @@ module.exports = {
     traerGeneros: traerGeneros,
     mostrarPeli: mostrarPeli,
     recomendarPeli: recomendarPeli,
-};
+}
